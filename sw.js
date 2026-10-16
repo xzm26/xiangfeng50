@@ -9,7 +9,7 @@ self.addEventListener('install',event=>{
 });
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('xiangfeng50-')&&key!==CACHE)await caches.delete(key);await self.clients.claim()})()));
 self.addEventListener('fetch',event=>{
- const request=event.request;if(request.method!=='GET'||!allowed.has(request.url))return;
+ const request=event.request,key=new URL(request.url);key.search='';key.hash='';if(request.method!=='GET'||!allowed.has(key.href))return;
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE);
   if(request.mode==='navigate'){
@@ -17,7 +17,7 @@ self.addEventListener('fetch',event=>{
    const network=fetch(request,{cache:'no-cache'}).then(async response=>{if(response.ok)await cache.put(url('index.html'),response.clone());return response});
    try{if(!cached)return await network;return await Promise.race([network,new Promise(resolve=>timer=setTimeout(()=>resolve(cached),2000))])}catch(error){if(cached)return cached;throw error}finally{clearTimeout(timer)}
   }
-  const cached=await cache.match(request);if(cached)return cached;
-  const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response;
+  const cached=await cache.match(key.href);if(cached)return cached;
+  const response=await fetch(request);if(response.ok)await cache.put(key.href,response.clone());return response;
  })());
 });
