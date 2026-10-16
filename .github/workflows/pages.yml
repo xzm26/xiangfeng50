@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v6
       - name: Configure Pages
         uses: actions/configure-pages@v5
+      - name: Refresh game cache version
+        run: python3 build-assets.py
       - name: Upload static game
         uses: actions/upload-pages-artifact@v4
         with:
