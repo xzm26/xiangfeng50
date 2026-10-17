@@ -10,6 +10,7 @@ for file in files:
  digest.update(file.encode());data=(root/file).read_bytes()
  if file=='index.html':data=re.sub(rb'(\.(?:js|css))\?v=[^"\s]+',rb'\1',data)
  digest.update(data)
+old['hashes']={file:hashlib.sha256((root/file).read_bytes()).hexdigest() for file in files if file.startswith('assets/')}
 old.update(revision=digest.hexdigest()[:16],files=files+['asset-map.js'])
 html=(root/'index.html').read_text(encoding='utf-8')
 html=re.sub(r'((?:src|href)="[^"?]+\.(?:js|css))(?:\?v=[^"]*)?"',lambda m:m[1]+'?v='+old['revision']+'"',html)
