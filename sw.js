@@ -9,7 +9,7 @@ self.addEventListener('install',event=>{
 });
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('xiangfeng50-')&&key!==CACHE)await caches.delete(key);await self.clients.claim()})()));
 self.addEventListener('fetch',event=>{
- const request=event.request,key=new URL(request.url);key.search='';key.hash='';if(request.method!=='GET'||!allowed.has(key.href))return;
+ const request=event.request,key=new URL(request.url);if(key.searchParams.has('v')&&key.searchParams.get('v')!==GAME_ASSETS.revision)return;key.search='';key.hash='';if(request.method!=='GET'||!allowed.has(key.href))return;
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE);
   if(request.mode==='navigate'){
